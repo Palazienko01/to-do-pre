@@ -20,6 +20,11 @@ function loadTasks() {
 	return items;
 }
 
+function updateTasks() {
+	items = getTasksFromDOM();
+	saveTasks(items);
+}
+
 function createItem(item) {
 	const clone = template.content.querySelector(".to-do__item").cloneNode(true);
 	const textElement = clone.querySelector(".to-do__item-text");
@@ -31,16 +36,14 @@ function createItem(item) {
 
 	deleteButton.addEventListener("click", () => {
 		clone.remove();
-		items = getTasksFromDOM();
-		saveTasks(items);
+		updateTasks();
 	});
 
 	duplicateButton.addEventListener("click", () => {
 		const itemName = textElement.textContent;
 		const newItem = createItem(itemName);
 		listElement.prepend(newItem);
-		items = getTasksFromDOM();
-		saveTasks(items);
+		updateTasks();
 	});
 
 	editButton.addEventListener("click", () => {
@@ -50,8 +53,7 @@ function createItem(item) {
 
 	textElement.addEventListener("blur", () => {
 		textElement.setAttribute("contenteditable", "false");
-		items = getTasksFromDOM();
-		saveTasks(items);
+		updateTasks();
 	});
 
 	return clone;
@@ -72,10 +74,10 @@ function saveTasks(tasks) {
 
 formElement.addEventListener("submit", (evt) => {
 	evt.preventDefault();
-	const item = inputElement.value;
+	const item = inputElement.value.trim();
+	if (!item) return;
 	listElement.prepend(createItem(item));
-	items = getTasksFromDOM();
-	saveTasks(items);
+	updateTasks();
 	formElement.reset();
 });
 
